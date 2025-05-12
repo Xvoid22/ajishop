@@ -132,11 +132,13 @@
     }
     
     .card-body {
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      height: 160px;
-    }
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* bagi ruang atas-bawah */
+  height: auto; /* biar fleksibel */
+  min-height: 220px; /* tambah sedikit ruang */
+}
     
     .card-title {
       font-size: 1.5rem;
