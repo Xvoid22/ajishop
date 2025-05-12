@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel & Script Shop</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary: #5fc2ee;
+      --primary-dark: #38b8d8;
+      --accent: #d4b3e8;
+      --accent-dark: #d4b3e8;
+      --bg: #f8f9fc;
+      --fg: #2d3748;
+      --light: #718096;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --radius: 10px;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --transition: 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  min-width: 320px;
+}
+    
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1.5rem;
+    }
+    
+    header {
+      text-align: center;
+      padding: 3rem 0 2rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: white;
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+    }
+    
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    header p {
+      opacity: 0.85;
+      font-weight: 300;
+      font-size: 1.1rem;
+    }
+    
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .tab {
+      padding: 0.75rem 1.5rem;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .tab i {
+      color: var(--primary);
+    }
+    
+    .tab:hover {
+      transform: translateY(-2px);
+    }
+    
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .tab.active i {
+      color: white;
+    }
+    
+    .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  row-gap: 2rem;   /* jarak antar baris (vertikal) */
+  column-gap: 1rem; /* jarak antar kolom (horizontal) */
+}
+    
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: all var(--transition);
+      border: 1px solid var(--border);
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      height: 160px;
+    }
+    
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--fg);
+    }
+    
+    .card-price {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-buy {
+      margin-top: auto;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-buy:hover {
+      background: var(--primary-dark);
+    }
+    
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: modalFadeIn 0.3s ease;
+    }
+    
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-header {
+      padding: 1.5rem 1.5rem 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--light);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+    
+    .close-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--accent);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--fg);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border var(--transition);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+    }
+    
+    .form-group input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+    
+    .payment-methods {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 0.8rem;
+      flex-wrap: wrap;
+    }
+    
+    .payment-method {
+      flex: 1;
+      min-width: 80px;
+      text-align: center;
+      padding: 0.8rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      font-weight: 500;
+    }
+    
+    .payment-method:hover {
+      border-color: var(--primary);
+    }
+    
+    .payment-method.selected {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+    }
+    
+    #payment-details {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(67, 97, 238, 0.05);
+      border-radius: var(--radius);
+      border: 1px dashed var(--primary);
+    }
+    
+    .upload-area {
+      border: 2px dashed var(--border);
+      padding: 2rem 1rem;
+      border-radius: var(--radius);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: rgba(67, 97, 238, 0.02);
+    }
+    
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.05);
+    }
+    
+    .upload-area i {
+      font-size: 2rem;
+      color: var(--light);
+      margin-bottom: 0.5rem;
+    }
+    
+    #preview-image {
+      display: none;
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .modal-footer {
+      padding: 1rem 1.5rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+    
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-submit:hover {
+      background: var(--accent-dark);
+    }
+    
+    .loader, .error, .confirmation {
+      text-align: center;
+      margin-top: 1rem;
+      display: none;
+    }
+    
+    .loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(67, 97, 238, 0.1);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .error {
+      color: #e53e3e;
+      background: rgba(229, 62, 62, 0.1);
+      padding: 0.8rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+    }
+    
+    .confirmation {
+      color: #38a169;
+      background: rgba(56, 161, 105, 0.1);
+      padding: 1rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+    }
+    
+    .modal-product-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background: rgba(67, 97, 238, 0.05);
+      padding: 1rem;
+      border-radius: var(--radius);
+    }
+    
+    .modal-product-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      font-size: 1.5rem;
+    }
+    
+    .modal-product-details h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    
+    .modal-product-details p {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .tabs {
+        gap: 0.5rem;
+      }
+      
+      .tab {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .card-body {
+  padding: 1rem;
+  min-height: 160px;
+}
+      
+      .modal-content {
+        max-width: 95%;
+      }
+    }
+
+    /* Scroll styling */
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .modal-content::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+    }
+    
+    .modal-content::-webkit-scrollbar-thumb {
+      background: rgba(67, 97, 238, 0.3);
+      border-radius: 10px;
+    }
+
+.glow-text {
+  color: white;
+  text-shadow: 0 0 5px var(--accent), 0 0 10px var(--accent-dark), 0 0 20px var(--accent-dark);
+  animation: flicker 1.5s infinite alternate;
+}
+
+.about {
+  background-color: #f1f5f9;
+  padding: 4rem 1rem;
+  color: #1a202c;
+}
+
+.about .container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 1rem 0;
+}
+
+.testimonials {
+  background: #f1f5f9;
+  padding: 4rem 1.5rem;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700; /* Bisa juga pakai 'bold' */
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 2rem;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.testimonial {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.testimonial:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial p {
+  font-style: italic;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+.testimonial h4 {
+  color: #3ab5e3;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.testimonial span {
+  color: #718096;
+  font-size: 0.9rem;
+}
+.top-marquee {
+  background: linear-gradient(to right, #5fc2ee, #d4b3e8);
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 0;
+  font-size: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  z-index: 9999;
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* BLUE THEME COUNTER */
+.counter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.counter-box {
+  background: linear-gradient(135deg, #5fc2ee, #d4b3e8);
+  color: #ffffff;
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 123, 255, 0.3);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.counter-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 16px 40px rgba(0, 123, 255, 0.5);
+}
+
+.counter-box h2 {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #e0f0ff;
+}
+
+.counter-box .number {
+  font-size: 3.5rem;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.skills-section {
+  background-color: #f0f4ff;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2rem;
+  color: #3ab5e3;
+  margin-bottom: 40px;
+}
+
+.skill {
+  margin-bottom: 25px;
+  width: 90%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.skill p {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.skill-bar {
+  background-color: #dfefff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.skill-fill {
+  background: linear-gradient(90deg, #5fc2ee, #d4b3e8);
+  color: white;
+  padding: 8px 12px;
+  font-weight: bold;
+  border-radius: 10px 0 0 10px;
+  animation: fillBar 2s ease-in-out;
+}
+
+#telegramButton {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  background-color: #5fc2ee;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: transform 0.3s ease;
+  text-decoration: none;
+}
+
+#telegramButton:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 480px) {
+  .tab {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-price {
+    font-size: 1.1rem;
+  }
+
+  #telegramButton {
+    bottom: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@keyframes fillBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.9; text-shadow: 0 0 2px var(--accent); }
+  100% { opacity: 1; text-shadow: 0 0 8px var(--accent-dark); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+    
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(67, 97, 238, 0.5);
+    }
+
+    /* Additional style for input file */
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+  <body>
+    <div class="top-marquee">
+  <marquee behavior="scroll" direction="right" scrollamount="5">
+    SELAMAT DATANG DI TOKO KAMI! TEMUKAN PRODUK TERBAIK DENGAN HARGA TERJANGKAU! BELANJA AMAN, CEPAT, DAN TERPERCAYA!
+  </marquee>
+</div>
+  </body>
+</head>
+<body>
+  <header>
+    <div class="container">
+        <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-rocket"></i> Digital Products Provider Since 2024
+      </div>
+      <h1 class="glow-text">AJI STORE</h1>
+      <p>Produk Digital Premium Berkualitas untuk Kebutuhan Hosting dan Bot Anda</p>
+      <div class="hero-contact">
+        <i class="fab fa-telegram"></i> Telegram: @GENERAL_REAL
+      </div>
+    </div>
+  </section>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" data-cat="kuntel"><i class="fab fa-telegram-plane"></i> AKUN TELEGRAM</div>
+      <div class="tab" data-cat="nokos"><i class="fas fa-sms"></i> NOKOS WHATSAPP</div>
+      <div class="tab" data-cat="partner"><i class="fas fa-star"></i> PARTNER AJI</div>
+      <div class="tab" data-cat="rekber"><i class="fas fa-star"></i> JASA MC/REKBER</div>
+      <div class="tab" data-cat="all"><i class="fas fa-star"></i> PRODUK LAINNYA</div>
+    </div>
+    <div class="grid" id="product-grid"></div>
+  </div>
+
+  <!-- Modal Pembayaran -->
+  <div class="modal" id="payment-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Form Pembayaran</h2>
+        <button class="close-btn" id="close-modal"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <div class="modal-body">
+        <div id="form-wrapper">
+          <div class="modal-product-info">
+            <div class="modal-product-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="modal-product-details">
+              <h3 id="product-name-display">Panel 1 GB</h3>
+              <p id="product-price-display">Rp10,000</p>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-shopping-bag"></i> Produk</label>
+            <input type="text" id="product-name" readonly>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> Harga (Rp)</label>
+            <input type="text" id="product-price" readonly>
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-address-book"></i> Kontak (HP/Telegram)</label>
+            <input type="text" id="contact" placeholder="0812xxxxx atau @username">
+          </div>
+          
+          <div class="form-group">
+            <label><i class="fas fa-money-bill"></i> Metode Pembayaran</label>
+            <div class="payment-methods">
+              <div class="payment-method" data-method="dana">DANA</div>
+              <div class="payment-method" data-method="gopay">GoPay</div>
+              <div class="payment-method" data-method="qris">QRIS</div>
+            </div>
+            <div id="payment-details"></div>
+          </div>
+          
+          <div class="form-group upload-area" id="upload-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Klik untuk unggah bukti pembayaran</p>
+            <input type="file" id="proof" accept="image/*">
+            <img id="preview-image" alt="Preview">
+          </div>
+          
+          <div class="error" id="error-msg">Lengkapi semua data!</div>
+          <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Memproses...</p>
+          </div>
+          <div class="confirmation" id="confirmation">
+            <p><i class="fas fa-check-circle"></i> Pembayaran berhasil terkirim!</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-submit" id="submit-btn">
+          <i class="fas fa-paper-plane"></i> Kirim Pembayaran
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <section class="testimonials">
+  <h2 class="section-title">BENEFIT JOIN PARTNER?</h2>
+  <div class="testimonial-grid">
+    <div class="testimonial">
+      <p>BISA OPEN PT SENDIRI</p>
+      <p>JADI ADMIN DI GB PUBLIK</p>
+      <p>JADI ADMIN DI CHANNEL</p>
+      <p>MASUK GRUB ALL PT</p>
+      <p>METHODS LIMIT TELE</p>
+      <p>APK KEBUTUHAN SOSMED</p>
+      <p>TITLE > PARTNER</p>
+      <p>MENDAPATKAN KEPERCAYAAN OWNER HINGGA 100%</p>
+      <p>BALMOD APABILA ADA NIAT DAN USAHA</p>
+      <p>DI BERI AKSES SEMATKAN TEKS</p>
+      <p>DI PROMOSIKAN AKUN NYA</p>
+      <span>HUBUNGI TELEGRAM ADMIN</span>
+    </div>
+  
+  <section class="testimonials">
+  <h2 class="section-title">Ulasan Pelanggan Kami?</h2>
+  <div class="testimonial-grid">
+    <div class="testimonial">
+      <p>"Layanan cepat dan support-nya responsif. Recommended!"</p>
+      <h4>Sanz66.</h4>
+      <span>Partner Aji</span>
+    </div>
+    <div class="testimonial">
+      <p>"Userbot nya lancar fitur keren mantap pokoknya"</p>
+      <h4>Riza.</h4>
+      <span>Pengguna Userbot</span>
+    </div>
+    <div class="testimonial">
+      <p>"Harga murah, akun telegram awet."</p>
+      <h4>Han.</h4>
+      <span>Akun Telegram</span>
+    </div>
+  </div>
+</section>
+  
+  <section data-aos="fade-up">
+  <div class="counter-container">
+    <div class="counter-box">
+      <h2>Jumlah Pengunjung</h2>
+      <div class="number" id="fake-counter">1,000</div>
+    </div>
+  </div>
+</section>
+
+<section class="skills-section" data-aos="fade-up">
+  <h2 class="section-title">Performa Layanan</h2>
+  <div class="skill">
+    <p>Kecepatan Server</p>
+    <div class="skill-bar">
+      <div class="skill-fill" style="width: 95%">95%</div>
+    </div>
+  </div>
+  <div class="skill">
+    <p>Keamanan Data</p>
+    <div class="skill-bar">
+      <div class="skill-fill" style="width: 90%">90%</div>
+    </div>
+  </div>
+  <div class="skill">
+    <p>Kepuasan Pengguna</p>
+    <div class="skill-bar">
+      <div class="skill-fill" style="width: 98%">98%</div>
+    </div>
+  </div>
+</section>
+  
+  <footer>
+    <section class="about">
+  <div class="container">
+    <h2 class="section-title">Tentang Aji Store</h2>
+    <p>
+      Aji Store adalah penyedia produk digital terpercaya sejak 2024. Kami menyediakan layanan hosting, bot, dan panel dengan harga terjangkau dan kualitas terbaik. Visi kami adalah membantu individu dan pelaku usaha digital mendapatkan solusi yang cepat, praktis, dan efisien.
+    </p>
+    <p>
+      Kami selalu mengutamakan pelayanan pelanggan yang responsif, produk berkualitas, serta proses yang aman dan cepat. Terima kasih telah mempercayai Aji Store sebagai partner digital Anda
+    </p>
+    </p>
+    Kontak Admin : @GENERAL_REAL
+    </p>
+  </div>
+</section>
+</footer>
+
+<a href="https://t.me/@GENERAL_REAL" target="_blank" id="telegramButton" title="Hubungi via Telegram">
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 240 240" fill="white">
+    <path d="M120,0C53.7,0,0,53.7,0,120s53.7,120,120,120s120-53.7,120-120S186.3,0,120,0z M175.6,79.4
+      l-22.2,104.7c-1.7,7.5-6.2,9.3-12.6,5.8l-34.8-25.7l-16.8,16.2c-1.8,1.8-3.4,3.4-7,3.4l2.5-35.6l64.8-58.6
+      c2.8-2.5-0.6-3.9-4.3-1.4l-80.2,50.4l-34.6-10.8c-7.5-2.3-7.6-7.5,1.6-11.1l135.3-52.2
+      C171.1,67.4,177.6,71.3,175.6,79.4z"/>
+  </svg>
+</a>
+
+<script>
+  let counter = 1000;
+
+  function updateFakeCounter() {
+    const change = Math.floor(Math.random() * 10) - 5;
+    counter = Math.max(0, counter + change);
+    document.getElementById('fake-counter').textContent = counter.toLocaleString();
+  }
+
+  setInterval(updateFakeCounter, 2000);
+</script>
+
+  <script>
+    const TELEGRAM_BOT_TOKEN = '7702400547:AAHpFk9L8xHplJPwVdDOApXcqLJxyeL9Y6k';
+    const TELEGRAM_CHAT_ID = '5822460273';
+    
+    const paymentInfo = {
+      dana: { type: 'text', value: '6283899636106' },
+      gopay: { type: 'text', value: '-' },
+      qris: { type: 'image', src: 'https://files.catbox.moe/opc86u.jpg' }
+    };
+    
+    const products = [
+      { name:'AKUN TELE ID 1', price:1000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 2', price:2000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 3', price:3000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 4', price:4000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 5', price:5000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 6', price:6000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 7', price:7000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'AKUN TELE ID 8', price:8000, cat:'kuntel', icon:'https://files.catbox.moe/5chbi5.jpg' },
+      { name:'WHATSAPP INDONESIA', price:6000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
+      { name:'WHATSAPP SPANYOL', price:10000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
+      { name:'WHATSAPP FILIPINA', price:7000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
+      { name:'WHATSAPP MALAYSIA', price:15000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
+      { name:'WHATSAPP BHUTAN', price:13000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
+      { name:'PARTNER 60K [IDENT]', price:25000, cat:'partner', icon:'https://files.catbox.moe/ulf1fl.jpg' },
+      { name:'JUAL USERBOT VIA TELEGRAM /BULAN', price:10000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
+      { name:'OPEN JASA LEPAS LIMIT TELEGRAM', price:30000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
+      { name:'JUAL BAHAN UPGRADE DANA BISNIS JAMIN 100% ACC', price:20000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
+      { name:'OPEN MURID SUNTIK ALL SOSMED', price:25000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
+      { name:'JUAL GIFT KOLEKSI VIA TELEGRAM', price:85000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
+      { name:'JUAL BOT PANEL PTERODACTYLE', price:0, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
+      { name:'0 SAMPAI 10K FEE', price:1000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'20 SAMPAI 29K FEE', price:2000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'30 SAMPAI 39K FEE', price:3000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'40 SAMPAI 49K FEE', price:4000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'50 SAMPAI 59K FEE', price:5000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'60 SAMPAI 69K FEE', price:6000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'70 SAMPAI 79K FEE', price:7000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'80 SAMPAI 89K FEE', price:8000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'90 SAMPAI 99K FEE', price:9000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'100 SAMPAI 109K FEE', price:10000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
+      { name:'JASA SUNTIK SOSMED', price:0, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' }
+    ];
+    
+    const grid = document.getElementById('product-grid');
+    const tabs = document.querySelectorAll('.tab');
+    let currentCat = 'kuntel';
+    
+    function renderProducts() {
+      grid.innerHTML = '';
+      products.filter(p => p.cat === currentCat).forEach(p => {
+        const card = document.createElement('div'); 
+        card.className = 'card';
+        card.innerHTML = `
+      <img src="${p.icon}" alt="${p.name}" class="w-full h-48 object-cover rounded-lg shadow-md">
+      <div class="card-body">
+        <div class="card-title">${p.name}</div>
+        <div class="card-price">Rp${p.price.toLocaleString('id')}</div>
+        <button class="btn-buy"><i class="fas fa-shopping-cart"></i> Beli Sekarang</button>
+      </div>`;
+        card.querySelector('.btn-buy').addEventListener('click', () => openModal(p));
+        grid.appendChild(card);
+      });
+    }
+    
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      tab.classList.add('active');
+      currentCat = tab.getAttribute('data-cat');
+      renderProducts();
+    }));
+    
+    const modal = document.getElementById('payment-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const productNameInput = document.getElementById('product-name');
+    const productPriceInput = document.getElementById('product-price');
+    const productNameDisplay = document.getElementById('product-name-display');
+    const productPriceDisplay = document.getElementById('product-price-display');
+    const contactInput = document.getElementById('contact');
+    const methods = document.querySelectorAll('.payment-method');
+    const paymentDetailsDiv = document.getElementById('payment-details');
+    const proofInput = document.getElementById('proof');
+    const previewImage = document.getElementById('preview-image');
+    const submitBtn = document.getElementById('submit-btn');
+    const loader = document.getElementById('loader');
+    const errorMsg = document.getElementById('error-msg');
+    const confirmation = document.getElementById('confirmation');
+    let selectedMethod = null;
+    
+    function openModal(p) {
+      productNameInput.value = p.name;
+      productPriceInput.value = p.price;
+      productNameDisplay.textContent = p.name;
+      productPriceDisplay.textContent = `Rp${p.price.toLocaleString('id')}`;
+      contactInput.value = '';
+      methods.forEach(m => m.classList.remove('selected')); 
+      paymentDetailsDiv.innerHTML = '';
+      previewImage.style.display = 'none'; 
+      proofInput.value = '';
+      errorMsg.style.display = 'none'; 
+      confirmation.style.display = 'none';
+      modal.classList.add('active');
+    }
+    
+    closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
+    
+    // Close modal when clicking outside the modal content
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+    
+    methods.forEach(m => m.addEventListener('click', () => {
+      methods.forEach(x => x.classList.remove('selected'));
+      m.classList.add('selected'); 
+      selectedMethod = m.getAttribute('data-method');
+      const info = paymentInfo[selectedMethod];
+      if (info.type === 'text') {
+        paymentDetailsDiv.innerHTML = `<p>Bayar ke: <strong>${info.value}</strong></p>`;
+      } else {
+        paymentDetailsDiv.innerHTML = `<img src="${info.src}" alt="QRIS" style="max-width:100%; border-radius:8px;">`;
+      }
+    }));
+    
+    document.getElementById('upload-area').addEventListener('click', () => proofInput.click());
+    
+    proofInput.addEventListener('change', e => {
+      const f = e.target.files[0]; 
+      if (f) { 
+        previewImage.src = URL.createObjectURL(f); 
+        previewImage.style.display = 'block'; 
+      }
+    });
+    
+    async function sendToTelegram(product, price, contact, method, file) {
+      const text = `Produk: ${product}\nHarga: Rp${price.toLocaleString('id')}\nKontak: ${contact}\nMetode: ${method.toUpperCase()}`;
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text })
+      });
+      
+      const formData = new FormData(); 
+      formData.append('chat_id', TELEGRAM_CHAT_ID); 
+      formData.append('photo', file); 
+      formData.append('caption', 'Bukti Pembayaran');
+      
+      await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, { 
+        method: 'POST', 
+        body: formData 
+      });
+    }
+    
+    submitBtn.addEventListener('click', async () => {
+      const name = productNameInput.value.trim(); 
+      const price = parseInt(productPriceInput.value);
+      const contact = contactInput.value.trim(); 
+      const file = proofInput.files[0];
+      
+      if (!name || !price || !contact || !selectedMethod || !file) { 
+        errorMsg.style.display = 'block'; 
+        return; 
+      }
+      
+      errorMsg.style.display = 'none'; 
+      loader.style.display = 'block'; 
+      submitBtn.disabled = true;
+      
+      try {
+        await sendToTelegram(name, price, contact, selectedMethod, file);
+        loader.style.display = 'none';
+        confirmation.style.display = 'block';
+        setTimeout(() => {
+          modal.classList.remove('active');
+        }, 3000);
+      } catch (e) { 
+        errorMsg.textContent = 'Gagal mengirim ke Telegram'; 
+        errorMsg.style.display = 'block'; 
+        loader.style.display = 'none';
+      }
+      
+      submitBtn.disabled = false;
+    });
+    
+    renderProducts();
+  </script>
+</body>
+</html>
