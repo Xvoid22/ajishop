@@ -915,7 +915,7 @@
 </section>
 </footer>
 
-<a href="https://t.me/@GENERAL_REAL" target="_blank" id="telegramButton" title="Hubungi via Telegram">
+<a href="https://t.me/GENERAL_REAL" target="_blank" id="telegramButton" title="Hubungi via Telegram">
   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 240 240" fill="white">
     <path d="M120,0C53.7,0,0,53.7,0,120s53.7,120,120,120s120-53.7,120-120S186.3,0,120,0z M175.6,79.4
       l-22.2,104.7c-1.7,7.5-6.2,9.3-12.6,5.8l-34.8-25.7l-16.8,16.2c-1.8,1.8-3.4,3.4-7,3.4l2.5-35.6l64.8-58.6
@@ -960,14 +960,20 @@
       { name:'WHATSAPP FILIPINA', price:7000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
       { name:'WHATSAPP MALAYSIA', price:15000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
       { name:'WHATSAPP BHUTAN', price:13000, cat:'nokos', icon:'https://files.catbox.moe/w39qqo.jpeg' },
-      { name:'PARTNER 60K [IDENT]', price:60000, cat:'partner', icon:'https://files.catbox.moe/3xiw1d.jpg' },
-      { name:'JASA SUNTIK SOSMED', price:0, cat:'all', icon:'https://files.catbox.moe/qrc6z9.jpg' },
+      { name:'PARTNER 60K [IDENT]', price:6000, cat:'partner', icon:'https://files.catbox.moe/3xiw1d.jpg' },
+      {
+  name: 'JASA SUNTIK SOSMED',
+  price: 0,
+  cat: 'all',
+  icon: 'https://files.catbox.moe/qrc6z9.jpg',
+  desc: 'Chat admin dulu karna harga berbeda-beda.'
+},
+      { name:'OPEN MURID SUNTIK ALL SOSMED', price:25000, cat:'all', icon:'https://files.catbox.moe/qrc6z9.jpg' },
       { name:'JUAL BOT PANEL PTERODACTYLE', price:10000, cat:'all', icon:'https://files.catbox.moe/387331.jpg' },
       { name:'RESSELER BOT PANEL PTERODACTYLE', price:15000, cat:'all', icon:'https://files.catbox.moe/387331.jpg' },
       { name:'JUAL USERBOT VIA TELEGRAM /BULAN', price:10000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
       { name:'OPEN JASA LEPAS LIMIT TELEGRAM', price:30000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
       { name:'JUAL BAHAN UPGRADE DANA BISNIS JAMIN 100% ACC', price:20000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
-      { name:'OPEN MURID SUNTIK ALL SOSMED', price:25000, cat:'all', icon:'https://files.catbox.moe/qrc6z9.jpg' },
       { name:'JUAL GIFT KOLEKSI VIA TELEGRAM', price:85000, cat:'all', icon:'https://files.catbox.moe/bqwi3i.jpeg' },
       { name:'0 SAMPAI 10K FEE', price:1000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
       { name:'20 SAMPAI 29K FEE', price:2000, cat:'rekber', icon:'https://files.catbox.moe/ico5w3.png' },
@@ -986,31 +992,22 @@
     let currentCat = 'kuntel';
     
     function renderProducts() {
-  grid.innerHTML = '';
-  products.filter(p => p.cat === currentCat).forEach(p => {
-    const card = document.createElement('div'); 
-    card.className = 'card';
-
-    let priceHtml;
-    if (p.name === 'JASA SUNTIK SOSMED') {
-      priceHtml = `<input type="" class="price-input" placeholder="" min="0" />`;
-    } else {
-      priceHtml = `Rp${p.price.toLocaleString('id')}`;
+      grid.innerHTML = '';
+      products.filter(p => p.cat === currentCat).forEach(p => {
+        const card = document.createElement('div'); 
+        card.className = 'card';
+        card.innerHTML = `
+  <img src="${p.icon}" alt="${p.name}" class="w-full h-48 object-cover rounded-lg shadow-md">
+  <div class="card-body">
+    <div class="card-title">${p.name}</div>
+    ${p.desc ? `<div style="font-size: 0.9rem; color: #4a5568; margin-bottom: 1rem;">${p.desc}</div>` : ''}
+    <div class="card-price">Rp${p.price.toLocaleString('id')}</div>
+    <button class="btn-buy"><i class="fas fa-shopping-cart"></i> Beli Sekarang</button>
+  </div>`;
+        card.querySelector('.btn-buy').addEventListener('click', () => openModal(p));
+        grid.appendChild(card);
+      });
     }
-
-    card.innerHTML = `
-      <img src="${p.icon}" alt="${p.name}" class="w-full h-48 object-cover rounded-lg shadow-md">
-      <div class="card-body">
-        <div class="card-title">${p.name}</div>
-        <div class="card-price">${priceHtml}</div>
-        <button class="btn-buy"><i class="fas fa-shopping-cart"></i> Beli Sekarang</button>
-      </div>`;
-
-    // Gunakan openModal(p, card) agar bisa ambil input harga
-    card.querySelector('.btn-buy').addEventListener('click', () => openModal(p, card));
-    grid.appendChild(card);
-  });
-}
     
     tabs.forEach(tab => tab.addEventListener('click', () => {
       tabs.forEach(x => x.classList.remove('active'));
@@ -1036,50 +1033,20 @@
     const confirmation = document.getElementById('confirmation');
     let selectedMethod = null;
     
-    function openModal(p, card) {
-  const modal = document.getElementById('payment-modal');
-  const productNameInput = document.getElementById('product-name');
-  const productPriceInput = document.getElementById('product-price');
-  const productNameDisplay = document.getElementById('product-name-display');
-  const productPriceDisplay = document.getElementById('product-price-display');
-  const contactInput = document.getElementById('contact');
-  const methods = document.querySelectorAll('.payment-method');
-  const paymentDetailsDiv = document.getElementById('payment-details');
-  const proofInput = document.getElementById('proof');
-  const previewImage = document.getElementById('preview-image');
-  const errorMsg = document.getElementById('error-msg');
-  const confirmation = document.getElementById('confirmation');
-
-  productNameInput.value = p.name;
-  productNameDisplay.textContent = p.name;
-
-  if (p.name === 'JASA SUNTIK SOSMED') {
-    const cardInput = card.querySelector('.price-input')
-    productPriceInput.readOnly = false;
-    productPriceInput.value = cardInput.value;
-    productPriceInput.placeholder = 'Masukkan harga';
-    productPriceDisplay.textContent = cardInput.value ? `Rp${parseInt(cardInput.value).toLocaleString('id')}` : 'Rp -';
-
-    cardInput.addEventListener('input', () => {
-      productPriceInput.value = cardInput.value;
-      productPriceDisplay.textContent = cardInput.value ? `Rp${parseInt(cardInput.value).toLocaleString('id')}` : 'Rp -';
-    });
-  } else {
-    productPriceInput.readOnly = true;
-    productPriceInput.value = p.price;
-    productPriceDisplay.textContent = `Rp${p.price.toLocaleString('id')}`;
-  }
-
-  contactInput.value = '';
-  methods.forEach(m => m.classList.remove('selected'));
-  paymentDetailsDiv.innerHTML = '';
-  previewImage.style.display = 'none';
-  proofInput.value = '';
-  errorMsg.style.display = 'none';
-  confirmation.style.display = 'none';
-
-  modal.classList.add('active');
-}
+    function openModal(p) {
+      productNameInput.value = p.name;
+      productPriceInput.value = p.price;
+      productNameDisplay.textContent = p.name;
+      productPriceDisplay.textContent = `Rp${p.price.toLocaleString('id')}`;
+      contactInput.value = '';
+      methods.forEach(m => m.classList.remove('selected')); 
+      paymentDetailsDiv.innerHTML = '';
+      previewImage.style.display = 'none'; 
+      proofInput.value = '';
+      errorMsg.style.display = 'none'; 
+      confirmation.style.display = 'none';
+      modal.classList.add('active');
+    }
     
     closeModalBtn.addEventListener('click', () => modal.classList.remove('active'));
     
